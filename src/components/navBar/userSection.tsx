@@ -1,4 +1,11 @@
-import { Typography, Box, Avatar, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Avatar,
+  CircularProgress,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { useState, useEffect } from "react";
 import { NAV_STYLES } from "./styles";
 import type { UserData } from ".";
@@ -8,10 +15,18 @@ export const UserSection: React.FC<{
   loading: boolean;
   error: string | null;
   onGoogleLogin: () => void;
-}> = ({ user, loading, error, onGoogleLogin }) => {
+  handleLogout: () => void;
+}> = ({ user, loading, error, onGoogleLogin, handleLogout }) => {
   const [imageLoading, setImageLoading] = useState(false);
   const [imgError, setImgError] = useState(false);
-
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     if (user?.picture) {
       const img = new Image();
@@ -38,6 +53,8 @@ export const UserSection: React.FC<{
               ...NAV_STYLES.avatar,
               opacity: imageLoading ? 0.5 : 1,
             }}
+            component="button"
+            onClick={handleClick}
             onLoad={() => setImageLoading(false)}
             onLoadStart={() => setImageLoading(true)}
           >
@@ -57,6 +74,17 @@ export const UserSection: React.FC<{
             />
           )}
         </Box>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>
       </>
     );
   }

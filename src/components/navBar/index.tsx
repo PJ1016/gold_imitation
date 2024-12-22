@@ -183,17 +183,8 @@ const NavBar: React.FC = () => {
             loading={loading}
             error={error}
             onGoogleLogin={handleGoogleLogin}
+            handleLogout={handleLogout}
           />
-          {user?.name && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLogout}
-              sx={{ marginLeft: "1rem" }}
-            >
-              Logout
-            </Button>
-          )}
         </Toolbar>
       </AppBar>
       <nav>
