@@ -7,7 +7,6 @@ import {
   Rating,
 } from "@mui/material";
 import React from "react";
-import vsImage from "../../VS.png";
 import { formatToINR } from "../../utils/formatToINR";
 interface ICustomCard {
   actualPrice: number;
@@ -44,7 +43,7 @@ const CustomCard = ({
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center" gap={1}>
             <Typography fontSize="1rem" color="primary">
-              {formatToINR(actualPrice)}
+              {formatToINR(discountedPrice)}
             </Typography>
             <Typography
               fontSize="0.8rem"
@@ -53,7 +52,7 @@ const CustomCard = ({
                 textDecoration: "line-through",
               }}
             >
-              {formatToINR(discountedPrice)}
+              {formatToINR(actualPrice)}
             </Typography>
           </Box>
           <Rating

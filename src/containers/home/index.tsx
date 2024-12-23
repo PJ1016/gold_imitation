@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import CustomCard from "./customCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface JewelryItem {
   productId: number;
@@ -22,8 +22,17 @@ interface JewelryItem {
   imageUrl: string;
   createdAt: string;
 }
+const sortingJewelleryItem = (items: JewelryItem[], sortBy: string) => {
+  if (sortBy === "highToLow") {
+    return items.sort((a, b) => a.discountedPrice - b.discountedPrice);
+  }
+  if (sortBy === "lowToHigh") {
+    return items.sort((a, b) => b.discountedPrice - a.discountedPrice);
+  }
+  return items.sort(() => Math.random() - 0.5);
+};
 
-const jewelryData: JewelryItem[] = [
+const jewelryInitalData: JewelryItem[] = [
   {
     productId: 1,
     name: "Classic Gold Pendant",
@@ -234,6 +243,10 @@ const gridBreakpoints = {
 
 const HomePage = () => {
   const [page, setPage] = useState(1);
+  const [sortByValue, setSortByValue] = useState("relevant");
+  const [jewelryData, setJewelryData] =
+    useState<JewelryItem[]>(jewelryInitalData);
+
   const itemsPerPage = 5; // Number of items to show per page
 
   // Calculate total pages
@@ -243,7 +256,6 @@ const HomePage = () => {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = jewelryData.slice(startIndex, endIndex);
-
   // Handle page change
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -253,7 +265,14 @@ const HomePage = () => {
     // Optionally scroll to top when page changes
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
+  const handleSortByValue = (event: any) => {
+    setSortByValue(event.target.value);
+  };
+  useEffect(() => {
+    const sortedData = sortingJewelleryItem(jewelryData, sortByValue);
+    setJewelryData(sortedData);
+    console.log("sortByvalue", sortByValue);
+  }, [jewelryData, sortByValue]);
   return (
     <Box sx={{ padding: 2 }}>
       <Box display="flex" gap={1} alignItems="center">
@@ -261,15 +280,15 @@ const HomePage = () => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          // value={age}
-          label="Age"
+          value={sortByValue}
           size="small"
+          variant="outlined"
           sx={{ minWidth: 120 }}
-          // onChange={handleChange}
+          onChange={handleSortByValue}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <MenuItem value="relevant">Relevant</MenuItem>
+          <MenuItem value="lowToHigh">Price - Low to High</MenuItem>
+          <MenuItem value="highToLow">Price - High to Low</MenuItem>
         </Select>
       </Box>
       <Grid container spacing={2}>
