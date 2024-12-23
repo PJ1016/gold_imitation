@@ -4,10 +4,11 @@ import {
   Box,
   MenuItem,
   Select,
-  Typography,
+  InputAdornment,
 } from "@mui/material";
 import CustomCard from "./customCard";
 import { useEffect, useState } from "react";
+import { SortOutlined } from "@mui/icons-material";
 
 interface JewelryItem {
   productId: number;
@@ -319,14 +320,18 @@ const HomePage = () => {
         justifyContent="flex-end"
         padding={2}
       >
-        <Typography fontWeight="bold">Sort by</Typography>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={sortByValue}
           size="small"
+          startAdornment={
+            <InputAdornment position="start">
+              <SortOutlined />
+            </InputAdornment>
+          }
           variant="outlined"
-          sx={{ minWidth: 120 }}
+          sx={{ minWidth: 200 }}
           onChange={handleSortByValue}
         >
           <MenuItem value="relevant">Relevant</MenuItem>

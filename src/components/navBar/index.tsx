@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { DrawerContent } from "./DrawerContent";
 import { UserSection } from "./userSection";
 import { NAV_STYLES } from "./styles";
+import { useNavigate } from "react-router-dom";
 
 // Types
 interface CustomJwtPayload {
@@ -40,8 +41,6 @@ export interface UserData {
 
 // Constants
 const NAV_ITEMS: readonly NavItem[] = [
-  { text: "Home", href: "/" },
-  { text: "About", href: "/about" },
   { text: "Contact", href: "/contact" },
 ] as const;
 
@@ -50,6 +49,7 @@ const NavBar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -162,7 +162,9 @@ const NavBar: React.FC = () => {
             <MenuIcon />
           </IconButton>
           <img
+            role="button"
             src={vsImage}
+            onClick={() => navigation("/")}
             alt="tirumala"
             style={{ width: "4rem", height: "4rem" }}
           />
