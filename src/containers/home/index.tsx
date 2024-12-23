@@ -21,15 +21,38 @@ interface JewelryItem {
   weight: number;
   imageUrl: string;
   createdAt: string;
+  rating?: number;
 }
-const sortingJewelleryItem = (items: JewelryItem[], sortBy: string) => {
-  if (sortBy === "highToLow") {
-    return items.sort((a, b) => a.discountedPrice - b.discountedPrice);
+const sortingJewelleryItem = (
+  items: JewelryItem[],
+  sortBy: string
+): JewelryItem[] => {
+  const sortedItems = [...items];
+
+  const compareDecimals = (a: number, b: number): number => {
+    // Using toFixed(2) to handle precision up to 2 decimal places
+    // Converting back to number for comparison
+    const diff = Number((b - a).toFixed(2));
+    if (diff === 0) return 0;
+    return diff > 0 ? 1 : -1;
+  };
+
+  switch (sortBy) {
+    case "highToLow":
+      return sortedItems.sort((a, b) =>
+        compareDecimals(a.discountedPrice, b.discountedPrice)
+      );
+    case "lowToHigh":
+      return sortedItems.sort((a, b) =>
+        compareDecimals(b.discountedPrice, a.discountedPrice)
+      );
+    case "rating":
+      return sortedItems.sort((a, b) =>
+        compareDecimals(a?.rating ?? 0, b?.rating ?? 0)
+      );
+    default:
+      return sortedItems;
   }
-  if (sortBy === "lowToHigh") {
-    return items.sort((a, b) => b.discountedPrice - a.discountedPrice);
-  }
-  return items.sort(() => Math.random() - 0.5);
 };
 
 const jewelryInitalData: JewelryItem[] = [
@@ -46,6 +69,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 15.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-01T10:00:00Z",
+    rating: 1.5,
   },
   {
     productId: 2,
@@ -59,6 +83,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 5.5,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-02T12:00:00Z",
+    rating: 2.5,
   },
   {
     productId: 3,
@@ -73,6 +98,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 10.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-03T14:00:00Z",
+    rating: 3.5,
   },
   {
     productId: 4,
@@ -87,6 +113,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 25.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-04T15:00:00Z",
+    rating: 4.5,
   },
   {
     productId: 5,
@@ -100,6 +127,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 3.2,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-05T16:00:00Z",
+    rating: 5,
   },
   {
     productId: 6,
@@ -114,6 +142,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 12.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-06T17:00:00Z",
+    rating: 1,
   },
   {
     productId: 7,
@@ -127,6 +156,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 20.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-07T18:00:00Z",
+    rating: 3,
   },
   {
     productId: 8,
@@ -141,6 +171,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 4.8,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-08T19:00:00Z",
+    rating: 4,
   },
   {
     productId: 9,
@@ -154,6 +185,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 8.5,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-09T20:00:00Z",
+    rating: 2.6,
   },
   {
     productId: 10,
@@ -167,6 +199,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 6.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-10T21:00:00Z",
+    rating: 4.5,
   },
   {
     productId: 11,
@@ -180,6 +213,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 20.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-11T10:00:00Z",
+    rating: 3.5,
   },
   {
     productId: 12,
@@ -193,6 +227,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 15.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-12T12:00:00Z",
+    rating: 5,
   },
   {
     productId: 13,
@@ -206,6 +241,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 30.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-13T13:00:00Z",
+    rating: 4.5,
   },
   {
     productId: 14,
@@ -219,6 +255,7 @@ const jewelryInitalData: JewelryItem[] = [
     weight: 8.0,
     imageUrl: "https://picsum.photos/seed/picsum/200",
     createdAt: "2024-12-14T14:00:00Z",
+    rating: 3.5,
   },
   {
     productId: 15,
@@ -269,13 +306,19 @@ const HomePage = () => {
     setSortByValue(event.target.value);
   };
   useEffect(() => {
-    const sortedData = sortingJewelleryItem(jewelryData, sortByValue);
+    const sortedData = sortingJewelleryItem(jewelryInitalData, sortByValue);
     setJewelryData(sortedData);
-    console.log("sortByvalue", sortByValue);
+    console.log("sortByvalue", sortByValue, jewelryData);
   }, [jewelryData, sortByValue]);
   return (
     <Box sx={{ padding: 2 }}>
-      <Box display="flex" gap={1} alignItems="center">
+      <Box
+        display="flex"
+        gap={1}
+        alignItems="center"
+        justifyContent="flex-end"
+        padding={2}
+      >
         <Typography fontWeight="bold">Sort by</Typography>
         <Select
           labelId="demo-simple-select-label"
@@ -289,6 +332,7 @@ const HomePage = () => {
           <MenuItem value="relevant">Relevant</MenuItem>
           <MenuItem value="lowToHigh">Price - Low to High</MenuItem>
           <MenuItem value="highToLow">Price - High to Low</MenuItem>
+          <MenuItem value="rating">Rating</MenuItem>
         </Select>
       </Box>
       <Grid container spacing={2}>
@@ -299,6 +343,7 @@ const HomePage = () => {
               discountedPrice={item.discountedPrice}
               description={item.description}
               imageUrl={item.imageUrl}
+              rating={item.rating as number}
             />
           </Grid>
         ))}

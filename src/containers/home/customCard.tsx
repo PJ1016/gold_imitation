@@ -13,12 +13,14 @@ interface ICustomCard {
   discountedPrice: number;
   description: string;
   imageUrl: string;
+  rating: number;
 }
 const CustomCard = ({
   actualPrice,
   discountedPrice,
   description,
   imageUrl,
+  rating,
 }: ICustomCard) => {
   return (
     <Paper
@@ -57,7 +59,7 @@ const CustomCard = ({
           </Box>
           <Rating
             sx={{ fontSize: "0.8rem" }}
-            defaultValue={2.5}
+            defaultValue={rating}
             precision={0.5}
             readOnly
           />
