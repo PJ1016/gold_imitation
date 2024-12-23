@@ -13,11 +13,13 @@ interface ICustomCard {
   actualPrice: number;
   discountedPrice: number;
   description: string;
+  imageUrl: string;
 }
 const CustomCard = ({
   actualPrice,
   discountedPrice,
   description,
+  imageUrl,
 }: ICustomCard) => {
   return (
     <Paper
@@ -35,7 +37,7 @@ const CustomCard = ({
     >
       <CardMedia
         sx={{ height: 175, objectFit: "fill" }}
-        image={vsImage}
+        image={imageUrl}
         title="green iguana"
       />
       <CardContent>
