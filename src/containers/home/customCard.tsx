@@ -5,6 +5,8 @@ import {
   Box,
   Typography,
   Rating,
+  Button,
+  Divider,
 } from "@mui/material";
 import React from "react";
 import { formatToINR } from "../../utils/formatToINR";
@@ -68,6 +70,10 @@ const CustomCard = ({
         <Typography variant="caption" sx={{ color: "GrayText" }}>
           {description}
         </Typography>
+        <Divider sx={{ margin: "1rem 0" }} />
+        <Button sx={{ width: "100%" }} variant="contained">
+          Add to cart
+        </Button>
       </CardContent>
     </Paper>
   );
