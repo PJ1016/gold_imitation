@@ -16,7 +16,7 @@ import {
   addToCart,
   type IJewelryItem,
 } from "../../store/slices/jewelleryCardSlice";
-import { ArrowForward, ArrowRightAlt, ShoppingCart } from "@mui/icons-material";
+import { ArrowForward, ShoppingCart } from "@mui/icons-material";
 interface ICustomCardProps {
   item: IJewelryItem;
 }

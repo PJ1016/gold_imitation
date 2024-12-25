@@ -1,3 +1,4 @@
+import { FC, useEffect, useState, useCallback } from "react";
 import {
   Grid,
   Pagination,
@@ -6,37 +7,52 @@ import {
   Select,
   InputAdornment,
   Stack,
-  Paper,
+  SelectChangeEvent,
 } from "@mui/material";
-import CustomCard from "./customCard";
-import { useEffect, useState } from "react";
 import { SortOutlined } from "@mui/icons-material";
+import CustomCard from "./customCard";
 import type { IJewelryItem } from "../../store/slices/jewelleryCardSlice";
-import { useAppSelector } from "../../store/store";
-const sortingJewelleryItem = (
+
+// Constants
+const ITEMS_PER_PAGE = 5;
+
+const SORT_OPTIONS = {
+  RELEVANT: "relevant",
+  LOW_TO_HIGH: "lowToHigh",
+  HIGH_TO_LOW: "highToLow",
+  RATING: "rating",
+} as const;
+
+type SortOptionType = (typeof SORT_OPTIONS)[keyof typeof SORT_OPTIONS];
+
+const GRID_BREAKPOINTS = {
+  xs: 12,
+  sm: 6,
+  md: 3,
+} as const;
+
+// Helper functions
+const compareDecimals = (a: number, b: number): number => {
+  const diff = Number((b - a).toFixed(2));
+  return diff === 0 ? 0 : diff > 0 ? 1 : -1;
+};
+
+const sortJewelryItems = (
   items: IJewelryItem[],
-  sortBy: string
+  sortBy: SortOptionType
 ): IJewelryItem[] => {
   const sortedItems = [...items];
 
-  const compareDecimals = (a: number, b: number): number => {
-    // Using toFixed(2) to handle precision up to 2 decimal places
-    // Converting back to number for comparison
-    const diff = Number((b - a).toFixed(2));
-    if (diff === 0) return 0;
-    return diff > 0 ? 1 : -1;
-  };
-
   switch (sortBy) {
-    case "highToLow":
+    case SORT_OPTIONS.HIGH_TO_LOW:
       return sortedItems.sort((a, b) =>
         compareDecimals(a.discountedPrice, b.discountedPrice)
       );
-    case "lowToHigh":
+    case SORT_OPTIONS.LOW_TO_HIGH:
       return sortedItems.sort((a, b) =>
         compareDecimals(b.discountedPrice, a.discountedPrice)
       );
-    case "rating":
+    case SORT_OPTIONS.RATING:
       return sortedItems.sort((a, b) =>
         compareDecimals(a?.rating ?? 0, b?.rating ?? 0)
       );
@@ -45,98 +61,108 @@ const sortingJewelleryItem = (
   }
 };
 
-const gridBreakpoints = {
-  xs: 12,
-  sm: 6,
-  md: 3,
-};
-interface IHomePage {
+// Component interfaces
+interface HomePageProps {
   jewelleryCardData: IJewelryItem[];
 }
-const HomePage = ({ jewelleryCardData }: IHomePage) => {
+
+// Sub-components
+const SortingSelect: FC<{
+  value: SortOptionType;
+  onChange: (value: SortOptionType) => void;
+}> = ({ value, onChange }) => (
+  <Select
+    labelId="sort-select-label"
+    id="sort-select"
+    value={value}
+    size="small"
+    startAdornment={
+      <InputAdornment position="start">
+        <SortOutlined />
+      </InputAdornment>
+    }
+    variant="outlined"
+    sx={{ minWidth: 200 }}
+    onChange={(event: SelectChangeEvent) =>
+      onChange(event.target.value as SortOptionType)
+    }
+  >
+    <MenuItem value={SORT_OPTIONS.RELEVANT}>Relevant</MenuItem>
+    <MenuItem value={SORT_OPTIONS.LOW_TO_HIGH}>Price - Low to High</MenuItem>
+    <MenuItem value={SORT_OPTIONS.HIGH_TO_LOW}>Price - High to Low</MenuItem>
+    <MenuItem value={SORT_OPTIONS.RATING}>Rating</MenuItem>
+  </Select>
+);
+
+const HomePage: FC<HomePageProps> = ({ jewelleryCardData }) => {
   const [page, setPage] = useState(1);
-  const [sortByValue, setSortByValue] = useState("relevant");
+  const [sortByValue, setSortByValue] = useState<SortOptionType>(
+    SORT_OPTIONS.RELEVANT
+  );
   const [jewelryData, setJewelryData] =
     useState<IJewelryItem[]>(jewelleryCardData);
 
-  const itemsPerPage = 5; // Number of items to show per page
+  // Memoized calculations
+  const totalPages = Math.ceil(jewelryData.length / ITEMS_PER_PAGE);
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+  const currentItems = jewelryData.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
-  // Calculate total pages
-  const totalPages = Math.ceil(jewelryData.length / itemsPerPage);
+  // Handlers
+  const handlePageChange = useCallback(
+    (_event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    []
+  );
 
-  // Get current page items
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = jewelryData.slice(startIndex, endIndex);
-  // Handle page change
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value);
-    // Optionally scroll to top when page changes
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-  const handleSortByValue = (event: any) => {
-    setSortByValue(event.target.value);
-  };
+  const handleSortChange = useCallback((value: SortOptionType) => {
+    setSortByValue(value);
+  }, []);
+
+  // Effects
   useEffect(() => {
     setJewelryData(jewelleryCardData);
   }, [jewelleryCardData]);
+
   useEffect(() => {
-    const sortedData = sortingJewelleryItem(jewelleryCardData, sortByValue);
+    const sortedData = sortJewelryItems(jewelleryCardData, sortByValue);
     setJewelryData(sortedData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortByValue]);
+  }, [jewelleryCardData, sortByValue]);
+
   return (
     <Box sx={{ padding: 2 }}>
       <Box
         display="flex"
         gap={1}
         alignItems="center"
-        justifyContent="flex-end"
         padding={2}
+        sx={{
+          justifyContent: { sm: "flex-end", xs: "center" },
+        }}
       >
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={sortByValue}
-          size="small"
-          startAdornment={
-            <InputAdornment position="start">
-              <SortOutlined />
-            </InputAdornment>
-          }
-          variant="outlined"
-          sx={{ minWidth: 200 }}
-          onChange={handleSortByValue}
-        >
-          <MenuItem value="relevant">Relevant</MenuItem>
-          <MenuItem value="lowToHigh">Price - Low to High</MenuItem>
-          <MenuItem value="highToLow">Price - High to Low</MenuItem>
-          <MenuItem value="rating">Rating</MenuItem>
-        </Select>
+        <SortingSelect value={sortByValue} onChange={handleSortChange} />
       </Box>
+
       <Stack direction="row">
-        {/* <Paper
-          sx={{
-            minWidth: "200px",
-            position: "sticky",
-            maxHeight: "100px",
-            top: 0,
-          }}
-        >
-          Hello
-        </Paper> */}
         <Grid container spacing={2}>
-          {currentItems.map((item: IJewelryItem) => (
-            <Grid key={item.productId} item {...gridBreakpoints}>
-              <CustomCard item={item} key={item.productId} />
+          {currentItems.map((item) => (
+            <Grid
+              display="flex"
+              key={item.productId}
+              item
+              {...GRID_BREAKPOINTS}
+              justifyContent={{ sm: "flex-end", xs: "center" }}
+            >
+              <CustomCard item={item} />
             </Grid>
           ))}
         </Grid>
       </Stack>
-      {/* Pagination component */}
+
       <Box
         sx={{
           display: "flex",
