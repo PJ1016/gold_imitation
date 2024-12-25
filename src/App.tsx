@@ -5,6 +5,8 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import ContactUs from "./containers/contactUs";
 import Home from "./containers/home";
 import About from "./containers/about";
+import BuyNow from "./containers/buyNow";
+import { useAppSelector } from "./store/store";
 // Page Components
 
 const App: React.FC = () => {
@@ -21,6 +23,7 @@ const App: React.FC = () => {
       },
     },
   });
+  const { jewelleryCardData } = useAppSelector((state) => state.jewelleryData);
 
   return (
     <ThemeProvider theme={theme}>
@@ -30,9 +33,13 @@ const App: React.FC = () => {
         <div className="App">
           <NavBar />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={<Home jewelleryCardData={jewelleryCardData} />}
+            />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/buyNow" element={<BuyNow />} />
           </Routes>
         </div>
       </Router>

@@ -13,6 +13,5 @@ export const NAV_STYLES = {
   avatar: {
     width: 40,
     height: 40,
-    marginLeft: "1rem",
   },
 } as const;

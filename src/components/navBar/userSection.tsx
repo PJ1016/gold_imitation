@@ -5,21 +5,26 @@ import {
   CircularProgress,
   Menu,
   MenuItem,
+  Badge,
 } from "@mui/material";
 import { useState, useEffect } from "react";
+import { ShoppingCart } from "@mui/icons-material";
 import { NAV_STYLES } from "./styles";
 import type { UserData } from ".";
+import { useAppSelector } from "../../store/store";
+import { selectCartItemsCount } from "../../store/slices/jewelleryCardSlice";
 
 export const UserSection: React.FC<{
   user: UserData | null;
   loading: boolean;
   error: string | null;
-  onGoogleLogin: () => void;
   handleLogout: () => void;
-}> = ({ user, loading, error, onGoogleLogin, handleLogout }) => {
+}> = ({ user, loading, error, handleLogout }) => {
   const [imageLoading, setImageLoading] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const cartCount = useAppSelector(selectCartItemsCount);
+
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -38,11 +43,17 @@ export const UserSection: React.FC<{
 
   if (user) {
     return (
-      <>
-        <Typography variant="subtitle1" sx={{ marginLeft: "1rem" }}>
+      <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+        <Typography
+          variant="subtitle1"
+          sx={{ marginLeft: "1rem", display: { xs: "none", sm: "block" } }}
+        >
           Welcome, {user.name}
         </Typography>
-        <Box sx={{ position: "relative", marginLeft: "1rem" }}>
+        <Badge badgeContent={cartCount} color="success" max={9}>
+          <ShoppingCart />
+        </Badge>
+        <Box sx={{ position: "relative" }}>
           <Avatar
             alt={user.name}
             src={
@@ -85,7 +96,7 @@ export const UserSection: React.FC<{
         >
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
-      </>
+      </Box>
     );
   }
 

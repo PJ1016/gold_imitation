@@ -41,7 +41,7 @@ export interface UserData {
 
 // Constants
 const NAV_ITEMS: readonly NavItem[] = [
-  { text: "Contact", href: "/contact" },
+  { text: "Contact us", href: "/contact" },
 ] as const;
 
 // Main Component
@@ -128,15 +128,6 @@ const NavBar: React.FC = () => {
     [dispatch]
   );
 
-  const handleGoogleLogin = useCallback(() => {
-    if (window.google) {
-      setLoading(true);
-    } else {
-      setError("Google Identity Services script not loaded");
-      setLoading(false);
-    }
-  }, []);
-
   useGoogleLogin(
     {
       clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID!,
@@ -168,23 +159,33 @@ const NavBar: React.FC = () => {
             alt="tirumala"
             style={{ width: "4rem", height: "4rem" }}
           />
-          <Box sx={{ flexGrow: 1 }} />
-          <Typography variant="h6" component="div" sx={NAV_STYLES.typography}>
+
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: { xs: "none", sm: "block" }, NAV_STYLES }}
+          >
             VS tirumala arts
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 15 }} />
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {NAV_ITEMS.map((item) => (
-              <Button key={item.text} href={item.href} color="inherit">
+              <Button
+                key={item.text}
+                onClick={() => {
+                  navigation(item.href);
+                }}
+                color="inherit"
+              >
                 {item.text}
               </Button>
             ))}
           </Box>
+
           <UserSection
             user={user}
             loading={loading}
             error={error}
-            onGoogleLogin={handleGoogleLogin}
             handleLogout={handleLogout}
           />
         </Toolbar>

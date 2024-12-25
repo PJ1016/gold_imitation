@@ -10,20 +10,28 @@ import {
 } from "@mui/material";
 import React from "react";
 import { formatToINR } from "../../utils/formatToINR";
-interface ICustomCard {
-  actualPrice: number;
-  discountedPrice: number;
-  description: string;
-  imageUrl: string;
-  rating: number;
+import { useAppDispatch } from "../../store/store";
+import { useNavigate } from "react-router-dom";
+import {
+  addToCart,
+  type IJewelryItem,
+} from "../../store/slices/jewelleryCardSlice";
+import { ArrowForward, ArrowRightAlt, ShoppingCart } from "@mui/icons-material";
+interface ICustomCardProps {
+  item: IJewelryItem;
 }
-const CustomCard = ({
-  actualPrice,
-  discountedPrice,
-  description,
-  imageUrl,
-  rating,
-}: ICustomCard) => {
+const CustomCard = ({ item }: ICustomCardProps) => {
+  const { actualPrice, discountedPrice, description, imageUrl, rating } = item;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleBuyNow = (): void => {
+    navigate("/buyNow");
+  };
+  const handleAddToCart = () => {
+    dispatch(addToCart(item));
+  };
+
   return (
     <Paper
       sx={{
@@ -71,9 +79,26 @@ const CustomCard = ({
           {description}
         </Typography>
         <Divider sx={{ margin: "1rem 0" }} />
-        <Button sx={{ width: "100%" }} variant="contained">
-          Add to cart
-        </Button>
+        {!item.isAddedToCart && (
+          <Button
+            sx={{ width: "100%", backgroundColor: "#ff3f6c" }}
+            variant="contained"
+            onClick={handleAddToCart}
+            startIcon={<ShoppingCart />}
+          >
+            Add to cart
+          </Button>
+        )}
+        {item.isAddedToCart && (
+          <Button
+            sx={{ width: "100%", backgroundColor: "#ff3f6c" }}
+            variant="contained"
+            onClick={() => handleBuyNow()}
+            endIcon={<ArrowForward />}
+          >
+            Buy now
+          </Button>
+        )}
       </CardContent>
     </Paper>
   );
