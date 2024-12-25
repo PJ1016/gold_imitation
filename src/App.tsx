@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/navBar";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
@@ -6,7 +6,8 @@ import ContactUs from "./containers/contactUs";
 import Home from "./containers/home";
 import About from "./containers/about";
 import BuyNow from "./containers/buyNow";
-import { useAppSelector } from "./store/store";
+import { useAppDispatch, useAppSelector } from "./store/store";
+import { fetchJewelleryData } from "./store/slices/jewelleryCardSlice";
 // Page Components
 
 const App: React.FC = () => {
@@ -24,7 +25,10 @@ const App: React.FC = () => {
     },
   });
   const { jewelleryCardData } = useAppSelector((state) => state.jewelleryData);
-
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchJewelleryData());
+  }, [dispatch]);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
