@@ -8,10 +8,12 @@ import {
   InputAdornment,
   Stack,
   SelectChangeEvent,
+  Button,
 } from "@mui/material";
 import { SortOutlined } from "@mui/icons-material";
 import CustomCard from "./customCard";
 import type { IJewelryItem } from "../../store/slices/jewelleryCardSlice";
+import { useNavigate } from "react-router-dom";
 
 // Constants
 const ITEMS_PER_PAGE = 5;
@@ -99,6 +101,7 @@ const HomePage: FC<HomePageProps> = ({ jewelleryCardData }) => {
   const [sortByValue, setSortByValue] = useState<SortOptionType>(
     SORT_OPTIONS.RELEVANT
   );
+  const navigate = useNavigate();
   const [jewelryData, setJewelryData] =
     useState<IJewelryItem[]>(jewelleryCardData);
 
@@ -144,6 +147,9 @@ const HomePage: FC<HomePageProps> = ({ jewelleryCardData }) => {
           justifyContent: { sm: "flex-end", xs: "center" },
         }}
       >
+        <Button variant="contained" onClick={() => navigate("/addJewellery")}>
+          Add Jewellery Items
+        </Button>
         <SortingSelect value={sortByValue} onChange={handleSortChange} />
       </Box>
 

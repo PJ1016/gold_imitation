@@ -35,8 +35,8 @@ const CustomCard = ({ item }: ICustomCardProps) => {
   return (
     <Paper
       sx={{
-        maxWidth: 250,
-        minHeight: 300,
+        width: 250,
+        height: 400,
         margin: "1rem",
         position: "relative",
         "&:hover": {
@@ -50,6 +50,7 @@ const CustomCard = ({ item }: ICustomCardProps) => {
         sx={{ height: 175, objectFit: "fill" }}
         image={imageUrl}
         title="green iguana"
+        onClick={() => navigate(`/product/${item.productId}`)}
       />
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="space-between">

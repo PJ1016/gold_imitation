@@ -8,6 +8,8 @@ import About from "./containers/about";
 import BuyNow from "./containers/buyNow";
 import { useAppDispatch, useAppSelector } from "./store/store";
 import { fetchJewelleryData } from "./store/slices/jewelleryCardSlice";
+import JewelleryDetails from "./containers/jewelleryDetails";
+import AddJewellery from "./containers/addJewellery";
 // Page Components
 
 const App: React.FC = () => {
@@ -41,9 +43,11 @@ const App: React.FC = () => {
               path="/"
               element={<Home jewelleryCardData={jewelleryCardData} />}
             />
+            <Route path="/product/:id" element={<JewelleryDetails />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/buyNow" element={<BuyNow />} />
+            <Route path="/addJewellery" element={<AddJewellery />} />
           </Routes>
         </div>
       </Router>

@@ -20,6 +20,8 @@
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
     "@types/react-router-dom": "^5.3.3",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.7.9",
     "jwt-decode": "^4.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
