@@ -60,7 +60,7 @@ export const fetchJewelleryData = createAsyncThunk(
   "jewellery/fetchJewelleryData",
   async () => {
     const response = await fetch(
-      "https://gold-imitation-flask.onrender.com/getJewelley"
+      "https://gold-imitation-flask.onrender.com/getJewellery"
     );
     const data = await response.json();
     console.log(data);
